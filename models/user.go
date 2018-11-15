@@ -20,7 +20,7 @@ type User struct {
 }
 
 //查询user
-func (u *User) GetUser(id int) *User {
+func GetUserById(id int) *User {
 	o := orm.NewOrm()
 	o.Using("default") // 默认使
 	user := User{Id: id}
@@ -37,6 +37,23 @@ func (u *User) GetUser(id int) *User {
 	return nil
 }
 
+//查询user
+func GetUserByName(userName string) *User {
+	o := orm.NewOrm()
+	o.Using("default") // 默认使
+	user := User{UserName: userName}
+	err := o.Read(&user, "user_name")
+
+	if err == orm.ErrNoRows {
+		beego.Informational("查询不到")
+	} else if err == orm.ErrMissPK {
+		beego.Informational("找不到主键")
+	} else {
+		beego.Informational("OK, we find the user!")
+		return &user
+	}
+	return nil
+}
 
 //添加
 func (u *User) InsertUser(user *User) (message string, err error)  {

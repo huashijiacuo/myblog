@@ -84,9 +84,8 @@
     <div >
         <form id="user" method="post">
             名字：<input name="username" type="text" />
-            年龄：<input name="age" type="text" />
-            邮箱：<input name="Email" type="text" />
-            <input type="submit" value="提交" />
+            密码： <input id="pwd" type="password" placeholder="Password" name="pwd" required="required" />
+            <input type="submit" value="登录" />
         </form>
     </div>
     <div class="author">
