@@ -13,6 +13,7 @@ import (
 func main() {
 	fmt.Println("This is my blog which developed by go!!")
 	beego.BConfig.WebConfig.Session.SessionOn = true
+	beego.Informational(beego.BConfig.CopyRequestBody)
 	beego.SetStaticPath("/download", "static/download")
 	beego.Run()
 

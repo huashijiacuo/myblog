@@ -15,7 +15,7 @@ type User struct {
 	Sex int `form:"gender"`
 	Email string `orm:"size(100)" form:"Email"`
 	PassWord string `form:"pwd"`
-	catalogs []*Catalog `orm:"reverse(many)"` // 设置一对多的反向关系
+	Catalog []*Catalog `orm:"reverse(many)"` // 设置一对多的反向关系
 
 }
 

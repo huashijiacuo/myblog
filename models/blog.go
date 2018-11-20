@@ -9,7 +9,7 @@ import (
 type Blog struct {
 	Id int				//Id:自增，主键
 	Title string `orm:"size(1000)"`		//Title:文章标题
-	Catalog int			//Catalog_id:文章所属目录id 外键 not null table5
+	//CatalogId int			//Catalog_id:文章所属目录id 外键 not null table5
 	Content string		//Content：文章内容
 	Time time.Time `orm:"auto_now;type(datetime)"`	//Time：完成时间
 	Description string `orm:"size(100)"` 	//Description：描述
@@ -20,8 +20,8 @@ type Blog struct {
 	From int			//From:文章来源（原创/转载）
 	Good int			//Good_id：点赞数
 	Bad int				//Bad_id: 踩数
-	catalog *Catalog `orm:"rel(fk)"`    //设置一对多关系
-	comment []*Comment `orm:"reverse(many)"` // 设置一对多的反向关系
+	Catalog *Catalog `orm:"rel(fk)"`    //设置一对多关系
+	Comment []*Comment `orm:"reverse(many)"` // 设置一对多的反向关系
 }
 
 

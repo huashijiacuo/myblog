@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/session"
 	"myblog/models"
+	"net/http"
 	"strconv"
 )
 var globalSessions *session.Manager
@@ -52,18 +54,29 @@ func (this *MainController) Post() {
 		return
 	}
 
-	u := models.GetUserByName(username)
-	beego.Informational(u.PassWord)
-	if u.PassWord == pwd {
+	user := models.GetUserByName(username)
+	beego.Informational(user.PassWord)
+	if user.PassWord == pwd {
 		beego.Informational("帐号密码正确，允许登录，并设置cookie!")
-		this.Ctx.SetCookie("username", u.UserName, 100, "/")  // 设置cookie
-		this.Ctx.SetCookie("password", u.PassWord, 100, "/")  // 设置cookie
-		this.Ctx.WriteString(u.UserName + "登录成功！用户信息写入cookie!")
+		this.Ctx.SetCookie("username", user.UserName, 100, "/")  // 设置cookie
+		this.Ctx.SetCookie("password", user.PassWord, 100, "/")  // 设置cookie
+		//this.Ctx.WriteString(user.UserName + "登录成功！用户信息写入cookie!")
+
+		userJson, err := json.Marshal(user)
+		if err != nil{
+			panic(err)
+		}
+
+		//Set Content-Type header so that clients will know how to read response
+		this.Ctx.ResponseWriter.Header().Set("Content-Type","application/json")
+		this.Ctx.ResponseWriter.WriteHeader(http.StatusOK)
+		//Write json response back to response
+		this.Ctx.ResponseWriter.Write(userJson)
 		return
 	}
 	beego.Informational("输入密码有误，请重新登录！")
 	//this.Redirect("/", 200)
-	this.Ctx.WriteString(u.UserName + "登录失败，密码错误!")
+	this.Ctx.WriteString(user.UserName + "登录失败，密码错误!")
 }
 
 

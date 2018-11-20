@@ -42,7 +42,7 @@ func init_1() {
 	fmt.Println(appName)
 	mysql := beego.AppConfig.String("mysql")
 	fmt.Println(mysql)
-	orm.RegisterDataBase("default", "mysql", "root:123456@tcp(127.0.0.1:3306)/MYBLOG?charset=utf8")
+	orm.RegisterDataBase("default", "mysql", "root:Love_zhi0928@tcp(127.0.0.1:3306)/MYTEST?charset=utf8")
 
 	orm.RegisterModel(new(UserTest), new(Post), new(Profile), new(Tag))
 

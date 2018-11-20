@@ -8,13 +8,13 @@ import (
 
 type Comment struct {
 	Id int 			//Id:自增，主键
-	Blog	int		//Blog_id:评论的博客id 外键 非空table2
+	//BlogId	int		//Blog_id:评论的博客id 外键 非空table2
 	Content	string	//Content：评论内容
 	Time time.Time	//Time：评论时间
 	UserId int		//Author_id：发表评论的作者id 外键 table1 非空
 	UserName int	//user_name:评论者的用户名
 	ToUserId int	//To_author_id:评论的文章的作者 外键 非空 table1
-	blog *Blog `orm:"rel(fk)"`    //设置一对多关系
+	Blog *Blog `orm:"rel(fk)"`    //设置一对多关系
 }
 
 //查询user

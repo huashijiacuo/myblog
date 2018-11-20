@@ -2,16 +2,17 @@ package models
 
 import (
 	"fmt"
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 )
 
 type Catalog struct {
 	Id int			//Id：自增，主键
-	UserId int 		//Author_id：目录创建者id 外键 table1
+	//UserId int 		//Author_id：目录创建者id 外键 table1
 	CatalogName string		//Name:目录名称
-	blogs []*Blog `orm:"reverse(many)"` // 设置一对多的反向关系
-	diarys []*Diary `orm:"reverse(many)"` // 设置一对多的反向关系
-	user *User `orm:"rel(fk)"`    //设置一对多关系
+	Blogs []*Blog `orm:"reverse(many)"` // 设置一对多的反向关系
+	Diarys []*Diary `orm:"reverse(many)"` // 设置一对多的反向关系
+	User *User `orm:"rel(fk)"`    //设置一对多关系
 }
 
 
@@ -33,6 +34,22 @@ func GetCatalog(id int) *Catalog {
 	return nil
 }
 
+func GetCatalogByName(cataName string) *Catalog {
+	o := orm.NewOrm()
+	o.Using("default") // 默认使
+	catalog := Catalog{CatalogName: cataName}
+	err := o.Read(&catalog)
+
+	if err == orm.ErrNoRows {
+		beego.Informational("查询不到")
+	} else if err == orm.ErrMissPK {
+		beego.Informational("找不到主键")
+	} else {
+		beego.Informational("OK, we find the user!")
+		return &catalog
+	}
+	return nil
+}
 
 //添加
 func InsertCatalog(catalog *Catalog) bool {

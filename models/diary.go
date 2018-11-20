@@ -9,7 +9,7 @@ import (
 type Diary struct {
 	Id int			//Id:自增，主键
 	Title string	//Title：日记标题
-	Catalog int		//Catalog_id：目录分类 外键 table5
+	//CatalogId int		//Catalog_id：目录分类 外键 table5
 	Content string	//Content：内容
 	Time time.Time 	//Time：写作时间
 	Description string `orm:"size(100)"` 	//Description：描述
@@ -17,7 +17,7 @@ type Diary struct {
 	From int			//From:文章来源（原创/转载）
 	UserId int		//Author_id：作者 外键 非空 table1
 	UserName string //User:作者名
-	catalog *Catalog `orm:"rel(fk)"`    //设置一对多关系
+	Catalog *Catalog `orm:"rel(fk)"`    //设置一对多关系
 }
 
 
