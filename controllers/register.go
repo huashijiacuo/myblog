@@ -25,7 +25,7 @@ func (r *RegisterController) Post() {
 		//handle error
 	}
 	beego.Informational("username:", u.UserName, " Email:", u.Email, "sex:", u.Sex, "pwd:", u.PassWord)
-	message, err := u.InsertUser(&u)
+	message, err := models.InsertUser(&u)
 	beego.Informational(message)
 	if err != nil {
 		r.Redirect("/register", 301)

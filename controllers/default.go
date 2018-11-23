@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 )
+
 var globalSessions *session.Manager
 
 func init() {

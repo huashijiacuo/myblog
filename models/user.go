@@ -56,7 +56,7 @@ func GetUserByName(userName string) *User {
 }
 
 //添加
-func (u *User) InsertUser(user *User) (message string, err error)  {
+func InsertUser(user *User) (message string, err error)  {
 	o := orm.NewOrm()
 	o.Using("default") // 默认使用 default，你可以指定为其他数据库
 
@@ -82,7 +82,7 @@ func (u *User) InsertUser(user *User) (message string, err error)  {
 }
 
 //删除(根据名称删除) 
-func (u *User) DeleteUser(user *User) error {
+func DeleteUser(user *User) error {
 	o := orm.NewOrm()
 	o.Using("default") // 默认使用 default，你可以指定为其他数据库
 	_, err := o.Delete(user)
@@ -91,7 +91,7 @@ func (u *User) DeleteUser(user *User) error {
 
 
 //更新
-func (u *User) UpdateUser(user *User) error {
+func UpdateUser(user *User) error {
 	o := orm.NewOrm()
 	o.Using("default") // 默认使用 default，你可以指定为其他数据库
 	_, err := o.Update(user)

@@ -7,7 +7,7 @@ import (
 )
 
 type Catalog struct {
-	Id int			//Id：自增，主键
+	Id int	`orm:"pk;auto"`		//Id：自增，主键
 	//UserId int 		//Author_id：目录创建者id 外键 table1
 	CatalogName string		//Name:目录名称
 	Blogs []*Blog `orm:"reverse(many)"` // 设置一对多的反向关系
@@ -52,14 +52,15 @@ func GetCatalogByName(cataName string) *Catalog {
 }
 
 //添加
-func InsertCatalog(catalog *Catalog) bool {
+func InsertCatalog(catalog *Catalog) error {
 	o := orm.NewOrm()
 	o.Using("default") // 默认使用 default，你可以指定为其他数据库
 	_, err := o.Insert(catalog)
 	if err != nil {
-		return false
+		beego.Informational("models.Catalog 插入数据失败！")
+		return err
 	}
-	return true
+	return err
 }
 
 //删除(根据名称删除) 

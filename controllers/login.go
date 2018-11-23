@@ -87,7 +87,17 @@ func (this *LoginController) Post() {
 				//this.Ctx.ResponseWriter.WriteHeader(http.StatusOK)
 				this.Ctx.SetCookie("username", u.UserName)
 				this.Ctx.SetCookie("token", "1")
-				this.SetSession(u.UserName, "1")
+				//this.SetSession(u.UserName, "1")
+				sess, errSess := globalSessions.SessionStart(this.Ctx.ResponseWriter, this.Ctx.Request)
+				if errSess != nil {
+					beego.Informational("session获取失败，检查是否有设置session!")
+				}
+				//（5）根据当前请求对象，设置一个session
+				sess.Set(u.UserName, "1")
+				beego.Informational("cookie中token为：1")
+				beego.Informational("session中token为：")
+				beego.Informational(sess.Get(u.UserName))
+				beego.Informational("userName = " + u.UserName)
 			} else {
 				beego.Informational("登录失败！")
 			}

@@ -10,8 +10,8 @@ type CatalogController struct {
 }
 
 type FrontCatalog struct {
-	CataName string
-	CataUserName string
+	CataName string `form:"cataName"`
+	CataUserName string `form:"userName"`
 }
 
 
@@ -34,6 +34,7 @@ func (this *CatalogController) CreateCatalog() {
 		//handle error
 		beego.Informational("前端参数解析出错！")
 	}
+	user := models.GetUserByName(frontCatalog.CataUserName)
 	token := this.GetSession(frontCatalog.CataUserName)
 	if token != "-1" {
 		catalog := models.GetCatalogByName(frontCatalog.CataName)
@@ -41,18 +42,32 @@ func (this *CatalogController) CreateCatalog() {
 			beego.Informational("目录名已存在！")
 			this.Ctx.WriteString("目录名已存在!")
 		} else {
-			newCatalog := models.Catalog{CatalogName:frontCatalog.CataName}
-			success := models.InsertCatalog(&newCatalog)
-			if success {
+			newCatalog := new(models.Catalog)
+			newCatalog.CatalogName = frontCatalog.CataName
+			newCatalog.User = user
+			user.Catalog = append(user.Catalog, newCatalog)
+			beego.Informational("cataName:" + newCatalog.CatalogName + "  , userId:" + string(newCatalog.User.Id))
+			beego.Informational(newCatalog.User.Id)
+			//updateUser := models.UpdateUser(user)
+			inserCatalog := models.InsertCatalog(newCatalog)
+			if inserCatalog == nil {
 				beego.Informational("创建目录成功！")
 				this.Ctx.WriteString("创建目录成功，目录名：" + frontCatalog.CataName)
+				return
+			} else {
+				//beego.Informational(updateUser)
+				beego.Informational(inserCatalog)
+				beego.Informational("数据库插入目录失败！")
+				this.Ctx.WriteString("数据库插入目录失败，目录名：" + frontCatalog.CataName + "\n")
+				return
 			}
-			beego.Informational("数据库插入目录失败！")
-			this.Ctx.WriteString("数据库插入目录失败，目录名：" + frontCatalog.CataName)
 		}
+	} else {
+		beego.Informational("请先登录！")
+		this.Ctx.WriteString("创建失败，需要先登录帐号！")
+		return
 	}
-	beego.Informational("请先登录！")
-	this.Ctx.WriteString("创建失败，需要先登录帐号！")
+	this.Ctx.WriteString("创建失败！")
 
 }
 

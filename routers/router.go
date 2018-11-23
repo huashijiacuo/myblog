@@ -13,5 +13,7 @@ func init() {
     //beego.Router("/login2", &controllers.LoginController{}, "get:Get")
     beego.Router("/logout", &controllers.LogoutController{})
     beego.Router("/getCatalogs", &controllers.CatalogController{}, "get:GetCatalog")
-
+    beego.Router("createCatalog", &controllers.CatalogController{}, "post:CreateCatalog")
+    beego.Router("makeFriends", &controllers.FriendController{}, "post:MakeFriends")
+	beego.Router("/agreeApply", &controllers.FriendController{}, "post:AgreeApply")
 }
