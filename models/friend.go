@@ -59,16 +59,21 @@ func GetFriendByName(name string) *Friend {
 }
 
 
-func GetApplyByName(name string) []*Friend {
+func GetAppliesByName(name string) ([]*Friend, error) {
 	o := orm.NewOrm()
 	o.Using("default") // 默认使
 	user := User{UserName:name}
 	o.Read(&user, "user_name")
 	var friends []*Friend
+	var friendList []*Friend
 
 	beego.Informational("查询申请列表的用户名：" + name + "; ID:")
 	beego.Informational(user.Id)
-	num, err := o.QueryTable("friend").Filter("friend_id", user.Id).All(&friends)
+
+	var maps []orm.Params
+	//num, err := o.QueryTable("Friend").Filter("friend_id",user.Id).Filter("agree", false).GroupBy("user_id").OrderBy("-time").Values(&maps,"UserId", "MarkName", "Time", "Agree")
+	num, err := o.QueryTable("Friend").Filter("FriendId", user.Id).Distinct().Values(&maps,"UserId", "FriendId", "Agree")
+
 
 	if err == orm.ErrNoRows {
 		fmt.Println("查询不到")
@@ -77,9 +82,45 @@ func GetApplyByName(name string) []*Friend {
 	} else {
 		beego.Informational("OK, we find the Applying user! Total number is " + string(num))
 		beego.Informational(num)
-		return friends
+		for _, value := range maps {
+			//beego.Informational(value)
+			//beego.Informational(value["FriendId"])
+			//beego.Informational(value["UserId"])
+			num1, err1 := o.QueryTable("Friend").Filter("friend_id", value["FriendId"]).Filter("agree", false).Filter("user_id", value["UserId"]).OrderBy("-time").Limit(1).All(&friends)
+
+			//beego.Informational(num1)
+
+			if err1 != nil {
+				beego.Informational(err1)
+				return nil, err1
+			}
+			if num1 > 0 {
+				beego.Informational(friends[0].UserId, friends[0].FriendId, friends[0].MarkName, friends[0].Time, friends[0].Agree)
+				friendList = append(friendList, friends[0])
+			}
+
+		}
+
+		return friendList, err
 	}
-	return nil
+	return nil, err
+}
+
+func GetApplyByFriendAndUser(friendName , userName string) ([]*Friend, error) {
+	o := orm.NewOrm()
+	o.Using("default") // 默认使
+	user := GetUserByName(userName)
+	friend := GetUserByName(friendName)
+
+	var friendApply []*Friend
+	num, err := o.QueryTable("Friend").Filter("friend_id", user.Id).Filter("agree", false).Filter("user_id", friend.Id).OrderBy("-time").All(&friendApply)
+
+	if err == nil {
+		beego.Informational(num)
+		return friendApply, err
+	}
+
+	return nil, err
 }
 
 //添加
@@ -97,24 +138,25 @@ func ApplyFriend(friend *Friend) error {
 }
 
 //删除(根据名称删除) 
-func DeleteFriend(friend *Friend) bool {
+func DeleteFriend(friend *Friend) error {
 	o := orm.NewOrm()
 	o.Using("default") // 默认使用 default，你可以指定为其他数据库
 	_, err := o.Delete(friend)
 	if err != nil {
-		return false
+		beego.Informational(err)
 	}
-	return true
+
+	return err
 }
 
 
 //更新
-func UpdateFriend(friend *Friend) bool {
+func UpdateFriend(friend *Friend) error {
 	o := orm.NewOrm()
 	o.Using("default") // 默认使用 default，你可以指定为其他数据库
 	_, err := o.Update(friend)
 	if err != nil {
-		return false
+		beego.Informational(err)
 	}
-	return true
+	return err
 }

@@ -63,12 +63,68 @@ func (this *FriendController) MakeFriends() {
 	this.Ctx.WriteString("好友申请失败!")
 }
 
-//post请求
+//post请求 两个参数，userName,friendName
 func (this *FriendController) AgreeApply() {
-	userName := "shun"
-	friends := models.GetApplyByName(userName)
+	beego.Informational("This is the agreeApply API!")
+	frontFriends := FrontFriends{}
+	this.ParseForm(&frontFriends)
+	if frontFriends.UserName == "" || frontFriends.FriendName == "" {
+		beego.Informational("The para is blank, please check it!")
+		this.Ctx.WriteString("The para is blank, please check it!")
+		return
+	} else {
+		applyList, err := models.GetApplyByFriendAndUser(frontFriends.FriendName, frontFriends.UserName)
+
+		if err != nil {
+			beego.Informational("Querying mysql is error")
+			beego.Informational(err)
+			this.Ctx.WriteString("Querying mysql is error!\n")
+			return
+		} else {
+			beego.Informational(applyList)
+			for index, apply := range applyList {
+				beego.Informational(apply)
+				if index == 1 {
+					apply.Agree = true
+					beego.Informational(apply.Time)
+					errUpdate := models.UpdateFriend(apply)
+					if errUpdate != nil {
+						beego.Informational("Update apply failed!")
+						this.Ctx.WriteString("处理请求失败！")
+						return
+					}
+				} else {
+					errDelete := models.DeleteFriend(apply)
+					if errDelete != nil {
+						beego.Informational("delete failed!")
+					}
+				}
+
+			}
+			this.Ctx.WriteString("ok! Agree your apply!")
+			return
+		}
+	}
+
+	this.Ctx.WriteString("Agree your applying！")
+}
+
+func (this *FriendController) ListApply() {
+
+	frontFriends := FrontFriends{} //只需要前端传递userName即可
+	this.ParseForm(&frontFriends)
+	friends, err := models.GetAppliesByName(frontFriends.UserName)
+	if err != nil {
+		beego.Informational(err)
+		this.Ctx.WriteString("this is a err while query databases!")
+		return
+	}
 	for _, friend := range friends {
+		beego.Informational("好友申请列表！")
 		beego.Informational(friend)
+	}
+	if friends == nil {
+		beego.Informational("没有好友申请待处理")
 	}
 	this.Ctx.WriteString("申请列表！")
 }

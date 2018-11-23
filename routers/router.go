@@ -16,4 +16,5 @@ func init() {
     beego.Router("createCatalog", &controllers.CatalogController{}, "post:CreateCatalog")
     beego.Router("makeFriends", &controllers.FriendController{}, "post:MakeFriends")
 	beego.Router("/agreeApply", &controllers.FriendController{}, "post:AgreeApply")
+    beego.Router("/listApply", &controllers.FriendController{}, "post:ListApply")
 }
